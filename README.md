@@ -1,154 +1,154 @@
-# 16. Cloud API Integration
+# Duck Typing
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#duck-typing)
+
+## Q16. Cloud API Integration
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#q16-cloud-api-integration)
 
 A cloud application receives data from multiple sources. Objects from different classes may provide a `read()` method, and the same processing function should work with all of them.
 
-## Question
+### Question
 
-**(a)** Explain how duck typing can be used in this situation. **[2]**
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#question)
 
-**(b)** Write a Python function that accepts any object supporting `read()`. **[3]**
+(a) Explain how duck typing can be used in this situation.
 
-**(c)** Explain why explicit type checking may not be necessary and state one advantage and one limitation of duck typing. **[3]**
+(b) Write a Python function that accepts any object supporting `read()`.
 
-## Solution
+(c) Explain why explicit type checking may not be necessary and state one advantage and one limitation of duck typing.
 
-Different objects from different classes can provide the same `read()` method.
+### Solution
 
-Python uses **duck typing**, which means that the type or class of an object is less important than the methods or operations it supports.
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#solution)
 
-If an object has a `read()` method, the processing function can use it without checking which class the object belongs to.
+According to the scenario, since the cloud application only cares whether an object can `read()` data and not what class it belongs to, duck typing lets one function handle objects from many different sources uniformly.
 
-## Duck Typing in Cloud API Integration
+### (a) How Duck Typing Applies
 
-Duck typing allows objects from different classes to be used by the same function if they provide the required `read()` method.
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#a-how-duck-typing-applies)
+
+Python follows the principle: **"If it walks like a duck and quacks like a duck, it's a duck."**
+
+In this situation:
+
+- The cloud application does not check the **class** of the incoming object.
+- It only checks whether the object **has a `read()` method**.
+- Any object — whether it comes from a file source, a network stream, a database connector, or a cloud storage API — can be processed **as long as it implements `read()`**.
+- This removes the need for rigid class hierarchies or interfaces, which is common in statically typed languages.
 
 ### Example
 
-Consider two different classes:
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#example)
 
-```python
+Suppose data arrives from three different sources:
+
+```
 class FileSource:
     def read(self):
-        return "Data from file"
+        return "Data from File Source"
 
 
-class CloudSource:
+class NetworkSource:
     def read(self):
-        return "Data from cloud"
+        return "Data from Network Source"
 
-Both classes have a read() method.
 
-Although the classes are different, the same processing function can work with both objects.
-
-1. Duck Typing
-
-Python does not need to check whether the object belongs to FileSource or CloudSource.
-
-It only checks whether the object can perform the required operation.
-
-Does the object have read()?
-        |
-       YES
-        |
-        v
-Process the data
-
-Therefore, both objects can be passed to the same function.
-
-2. Same Function for Different Objects
-
-The same processing function can accept objects from different classes.
-
-process_data(FileSource())
-process_data(CloudSource())
-
-The function works because both objects support the read() method.
-
-Algorithm
-Input
-Any object that supports the read() method.
-Steps
-Accept an object as an argument.
-Call the object's read() method.
-Store the returned data.
-Process or display the data.
-No explicit class or type checking is required.
-Python Implementation
-class FileSource:
+class CloudStorageSource:
     def read(self):
-        return "Data from file"
+        return "Data from Cloud Storage Source"
+```
 
+None of these classes share a common parent class, yet all three can be handled by the same function because each one **implements `read()`**.
 
-class CloudSource:
-    def read(self):
-        return "Data from cloud"
+### 1. No Class Check
 
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#1-no-class-check)
 
+- The processing function never asks `isinstance(obj, SomeClass)`.
+- It simply calls `obj.read()` and trusts that it will work.
+
+### 2. Runtime Behavior Check
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#2-runtime-behavior-check)
+
+- Python checks for the presence of `read()` **only when it is actually called**, at runtime.
+- If the object does not support `read()`, an `AttributeError` is raised at that point.
+
+### 3. Uniform Processing
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#3-uniform-processing)
+
+- Objects from `FileSource`, `NetworkSource`, and `CloudStorageSource` are all passed through the **same** processing function.
+- New source types can be added later **without modifying** the existing processing logic, as long as they also provide `read()`.
+
+# (b) Python Function
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#b-python-function)
+
+### Implementation
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#implementation)
+
+```
 def process_data(source):
-    data = source.read()
-    print("Received:", data)
+    if hasattr(source, "read") and callable(source.read):
+        print(source.read())
+    else:
+        print("Error: object does not support read()")
 
 
-file = FileSource()
-cloud = CloudSource()
-
-process_data(file)
-process_data(cloud)
-Output
-Received: Data from file
-Received: Data from cloud
-Why Explicit Type Checking Is Not Necessary
-
-In duck typing, Python focuses on what an object can do rather than what type it is.
-
-Instead of checking the class using isinstance(), we can directly call:
-
-source.read()
-
-If the object supports read(), the function works correctly.
-
-Therefore, explicit type checking is not necessary when the required method is available.
-
-Advantage of Duck Typing
-Flexibility
-
-Duck typing allows the same function to work with objects from different classes as long as they provide the required method.
-
-This makes the code:
-
-Flexible
-Reusable
-Easier to extend
-Limitation of Duck Typing
-Runtime Errors
-
-If an object does not provide the required read() method, Python will produce an error at runtime.
-
-For example:
-
-class InvalidSource:
-    pass
+class FileSource:
+    def read(self):
+        return "Data from File Source"
 
 
-process_data(InvalidSource())
-
-This results in an error because the object does not have a read() method.
-
-Therefore, duck typing provides flexibility but may cause runtime errors if the expected method is missing.
-
-Key Point
-
-Duck typing means: "If an object behaves like the required object, it can be used."
-
-In this scenario, any object that provides a read() method can be passed to the same processing function, regardless of its class.
-
-Coverage Note
-
-Duck typing, dynamic typing, and Python data model
+class NetworkSource:
+    def read(self):
+        return "Data from Network Source"
 
 
-### One important thing
+class CloudStorageSource:
+    def read(self):
+        return "Data from Cloud Storage Source"
 
-When you paste into GitHub, **do not paste the triple backticks around the entire README**. Copy **from `# 16. Cloud API Integration` through the Coverage Note**, including the individual Python code fences inside it.
 
-This will render as a proper structured README with headings, numbered subsections, bullets, and formatted code — **not 
+sources = [FileSource(), NetworkSource(), CloudStorageSource()]
+
+for src in sources:
+    process_data(src)
+```
+
+**svg**
+
+# Output
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#output)
+
+```
+Data from File Source
+Data from Network Source
+Data from Cloud Storage Source
+```
+
+# (c) Why Explicit Type Checking Is Not Necessary
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#c-why-explicit-type-checking-is-not-necessary)
+
+Python is **dynamically typed**, so the interpreter determines what an object can do **at runtime** based on its available attributes and methods, not on a declared class or interface. This means:
+
+- The processing function does not need to know in advance which classes it will receive.
+- Any object that "behaves like" a readable source (i.e., provides `read()`) is automatically compatible.
+- This matches the Python data model, where behavior is defined by supported operations/methods rather than inheritance.
+
+### Advantage
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#advantage)
+
+**Flexibility and extensibility** — New data source classes can be integrated into the cloud application without changing or extending the processing function, as long as they implement `read()`.
+
+### Limitation
+
+[svg](https://github.com/Mounika-Nalla-45/2601050112_MTech_CSE/tree/main/CO1/Duck%20Typing#limitation)
+
+**Runtime errors instead of compile-time errors** — If an object passed in does *not* actually support `read()`, the error (`AttributeError`) is only discovered when the code runs, not beforehand, which can make bugs harder to catch early.
